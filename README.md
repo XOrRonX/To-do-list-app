@@ -1,7 +1,9 @@
 # To-do-list-app
 to-do-list App - JS , HTML , CSS
 
-## explain program
+
+
+## Prorgam explanation:
 When the user presses the add item button, the input checked by the program - validation.
 the program Check that:
 1. The task is not empty.
