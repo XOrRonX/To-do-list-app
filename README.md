@@ -1,7 +1,8 @@
 # To-do-list-app
 to-do-list App - JS , HTML , CSS
 
-
+## Important
+To use this project, please download ZIP file to-do-list.zip.
 
 ## Prorgam explanation:
 When the user presses the add item button, the input checked by the program - validation.
