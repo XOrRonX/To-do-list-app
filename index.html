@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <title>to-do list</title>
+
+    <style>
+
+        body{
+            background-image: url("https://wallpapercave.com/wp/wp2260706.jpg");
+            text-align: center;
+            padding-left: 200px;
+            padding-right: 200px;
+            opacity: 0.92;
+            filter: alpha(opacity=50); /* For IE8 and earlier */
+
+        }
+        div{
+            text-align: center;
+        }
+
+    </style>
+
+
+</head>
+
+<body>
+
+<script>
+        // Task class
+        // hold the task name and have 5 methods
+        function Task(taskName) {
+            this.taskName = taskName;
+            this.getTask = function () { //return this task
+                return this;
+            };
+            this.getTaskName = function () { //return task name
+                return this.taskName;
+            };
+            this.getHtml = function () { //get the html of the task
+                return this.htmlTask;
+            };
+            this.getId = function () { //get task id
+                return this.id;
+            };
+            this.setHtml = function () { // create new node of the task
+                var thisTask = this.getTask();
+                var tempId =  Math.floor(Math.random() * 10000) + 1; // define id to new task
+                this.id = tempId;
+                var newTask = document.createElement("button"); // define new task
+                newTask.setAttribute("class","list-group-item list-group-item-action");
+                newTask.setAttribute("id",tempId);
+                newTask.setAttribute("onclick","disableHtmlTask(tempId,thisTask)");
+                newTask.setAttribute("style","border-radius: 10px");
+                newTask.onclick = function() {disableHtmlTask(tempId,thisTask);};
+                var newText = document.createTextNode(this.taskName); // create new text node
+                newTask.appendChild(newText); // create new task to task list
+
+                 this.htmlTask = newTask;
+            };
+        }
+
+        // Container class
+        // contains the list of task and list of the complete task
+        // has tow methods :  1.add task to the main task list
+        // 2.add task to the complete task
+        function Container() {
+            this.completeTasks = [];
+            this.listOfTasks = [];
+            this.addTaskComplete = function (task) {
+                var newTask = task.getHtml();
+                var taskList = document.getElementById("completeList") ;
+                taskList.appendChild(newTask);
+                this.completeTasks.push(task);
+            };
+            this.addTask = function (task) {
+                var newTask = task.getHtml();
+                var taskList = document.getElementById("clist") ;
+                taskList.appendChild(newTask);
+                this.listOfTasks.push(task);
+            };
+        }
+
+        //global function that gets a task and its id
+        //remove the task from the main tasks and insert it to the complete task list
+        function disableHtmlTask(id,task) {
+            var temp = document.getElementById(id);
+            con.addTaskComplete(task); // add task to complete task
+            temp.style.display = 'none'; // set the complete task to none
+            var tempId;
+            for (var t of con.listOfTasks )            {
+                tempId = t.getId();
+                if ( tempId === id )
+                    con.listOfTasks.splice(con.listOfTasks.indexOf(t),1)  // remove task from list of task
+            }
+        }
+        // the function check validation
+        // the function gets the container and the new task the user insert
+        // the first loop check if the new task is already inside
+        // the second loop check if the new task is already completed
+        function checkValidation(container,task) {
+            var taskName = task.getTaskName();
+            for (var t of container.listOfTasks) // run all the task that are in but not complete
+            {
+                var tempTaskName = t.getTaskName();
+                if ( taskName === tempTaskName  ) { // check if the new task is already inside
+                    var temp =  document.getElementById('alertId2');
+                    temp.style.display = 'block';
+                    setTimeout(function(){ temp.style.display = 'none'; }, 3000);
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        var con = new Container(); // create new container
+
+        document.addEventListener('DOMContentLoaded', function() {
+
+            document.getElementById("compact").addEventListener('click', function () {
+
+                var inputUser = document.getElementById("userInput").value.trim(); //input user
+                var task = new Task(inputUser); //create new task
+                if (inputUser === "") { // if the user input is empty throw exception
+                    var temp =  document.getElementById('alertId');
+                    temp.style.display = 'block';
+                    setTimeout(function(){ temp.style.display = 'none'; }, 3000);
+                    return false;
+                }
+                if (checkValidation(con,task) === true) { // check if the task is ok and then add to task list
+                    task.setHtml();
+                    con.addTask(task);
+                }
+
+            });
+            // listener to click in the show complete button
+            // show complete tasks
+            document.getElementById("showComplete").addEventListener('click', function () {
+                var userInput = document.getElementById("userInput");
+                var clist = document.getElementById("clist");
+                var compact = document.getElementById("compact");
+                var completeList = document.getElementById("completeList");
+                var mainTasks = document.getElementById("mainTasks");
+                var taskComplete = document.getElementById("taskComplete");
+                userInput.style.display = "none";
+                clist.style.display = "none";
+                compact.style.display = "none";
+                completeList.style.display = "block";
+                mainTasks.style.display = "none";
+                taskComplete.style.display = "block";
+                var tempId;
+                var tempCompleteTask;
+                for (var t of con.completeTasks) {
+                    tempId = t.getId();
+                    tempCompleteTask = document.getElementById(tempId);
+                    tempCompleteTask.style.display = "block";
+                }
+            });
+
+            // listener to click in the back button
+            // show tasks
+            document.getElementById("back").addEventListener('click', function () {
+                var userInput = document.getElementById("userInput");
+                var clist = document.getElementById("clist");
+                var compact = document.getElementById("compact");
+                var completeList = document.getElementById("completeList");
+                var mainTasks = document.getElementById("mainTasks");
+                var taskComplete = document.getElementById("taskComplete");
+                userInput.style.display = "block";
+                clist.style.display = "block";
+                compact.style.display = "block";
+                completeList.style.display = "none";
+                mainTasks.style.display = "block";
+                taskComplete.style.display = "none";
+            });
+
+
+
+        }, false);
+
+
+
+</script>
+
+<!-- Navar -->
+
+<div class="pos-f-t">
+    <div class="collapse" id="navbarToggleExternalContent">
+        <div class="bg-dark p-4">
+            <h5 class="text-white h4">Welcome to my do-dos</h5>
+            <span class="text-muted">Follow the instruction below to use the app.</span>
+        </div>
+    </div>
+    <nav class="navbar navbar-dark bg-dark">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </nav>
+</div>
+
+<!-- main headline -->
+
+<div id="mainTasks" class="jumbotron">
+    <h1 class="display-4">Work to-dos!</h1>
+    <p class="lead">Enter text into the input field to add items to your list<br>
+        Click on task to mark it as complete.
+    </p>
+    <hr class="my-4">
+    <p>Click to see completed tasks.</p>
+    <a id="showComplete"  class="btn btn-outline-dark" href="#" role="button">Show completed</a>
+</div>
+
+<!-- complete task headline -->
+
+<div id="taskComplete" class="jumbotron" style="display: none">
+    <h1 class="display-4">Work to-dos!</h1>
+    <p class="lead">Complete tasks.</p>
+    <hr class="my-4">
+    <p>Click to come back.</p>
+    <a id="back"  class="btn btn-outline-dark" href="#" role="button" >back</a>
+</div>
+
+<!-- alerts validation headline -->
+
+    <div id="alertId" style="display: none" class="alert alert-danger" role="alert">
+        You can't insert empty item!
+    </div>
+
+    <div id="alertId2" style="display: none" class="alert alert-danger" role="alert">
+        This item is already inside!
+    </div>
+
+<!-- user input holder and button insert -->
+
+<div class="input-group mb-3">
+    <input id="userInput" type="text" class="form-control" style="text-align: center" placeholder="New item..." aria-label="Recipient's username" aria-describedby="compact">
+    <div class="input-group-append">
+        <button id="compact" class="btn btn-outline-dark" type="button" >Insert item</button>
+    </div>
+</div>
+
+<!-- div container tasks -->
+
+<div id="clist" ></div>
+
+<!-- div container complete tasks tasks -->
+
+<div id="completeList" style="display: none" ></div>
+
+
+
+</body>
+</html>
