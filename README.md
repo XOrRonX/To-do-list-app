@@ -16,4 +16,4 @@ clicking on the entire task makes it a “completed” state, and is only visual
 that is, it is deleted from the page, but it is saved (with its state) within the program.
 
 
-![alt text](https://github.com/XOrRonX/Github-Search-App/blob/master/%E2%80%8F%E2%80%8F3_pic.PNG?raw=true)
+![alt text](https://github.com/XOrRonX/To-do-list-app/blob/master/pic.PNG?raw=true)
